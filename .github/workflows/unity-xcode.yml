@@ -1,23 +1,32 @@
-name: Build Unity to Xcode
+name: Remote Unity Repo Build
 
 on:
   workflow_dispatch:
+    inputs:
+      unity_repo_url:
+        description: 'GitHub link of the Unity project to build'
+        required: true
+        default: 'https://github.com/username/repo.git'
 
 jobs:
   build-xcode:
     runs-on: macos-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout this workflow repo (for BuildHelper.cs, etc)
       uses: actions/checkout@v4
 
-    - name: Display files
-      run: ls -la
+    - name: Clone Unity project repo
+      run: |
+        git clone "${{ github.event.inputs.unity_repo_url }}" UnityProject
 
-    - name: Extract Unity version from project
+    - name: Display Unity project files
+      run: ls -la UnityProject
+
+    - name: Extract Unity version from Unity project
       id: unity-version
       run: |
-        UNITY_VERSION=$(grep 'm_EditorVersion:' ProjectSettings/ProjectVersion.txt | awk '{print $2}')
+        UNITY_VERSION=$(grep 'm_EditorVersion:' UnityProject/ProjectSettings/ProjectVersion.txt | awk '{print $2}')
         echo "UNITY_VERSION=$UNITY_VERSION" >> $GITHUB_ENV
 
     - name: Install Unity
@@ -28,13 +37,13 @@ jobs:
 
     - name: Inject BuildHelper.cs for CI build
       run: |
-        mkdir -p "Assets/Editor"
-        cp "ci/BuildHelper.cs" "Assets/Editor/BuildHelper.cs"
+        mkdir -p "UnityProject/Assets/Editor"
+        cp "ci/BuildHelper.cs" "UnityProject/Assets/Editor/BuildHelper.cs"
 
     - name: Build Unity project to Xcode
       run: |
         UNITY_PATH="/Applications/Unity/Hub/Editor/${UNITY_VERSION}/Unity.app/Contents/MacOS/Unity"
-        PROJECT_PATH="$GITHUB_WORKSPACE"
+        PROJECT_PATH="$GITHUB_WORKSPACE/UnityProject"
         if [ ! -x "$UNITY_PATH" ]; then
           echo "❌ Unity not found at $UNITY_PATH"
           exit 1
@@ -44,4 +53,4 @@ jobs:
           -executeMethod BuildHelper.PerformBuild
 
     - name: List output
-      run: ls -la "$GITHUB_WORKSPACE"
+      run: ls -la "$GITHUB_WORKSPACE/UnityProject"
