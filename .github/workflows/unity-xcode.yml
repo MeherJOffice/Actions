@@ -38,7 +38,7 @@ jobs:
     - name: Inject BuildHelper.cs for CI build
       run: |
         mkdir -p "UnityProject/Assets/Editor"
-        cp "ci/BuildHelper.cs" "UnityProject/Assets/Editor/BuildHelper.cs"
+        cp "helpers/BuildHelper.cs" "UnityProject/Assets/Editor/BuildHelper.cs"
 
     - name: Build Unity project to Xcode
       run: |
