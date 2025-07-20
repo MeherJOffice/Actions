@@ -36,6 +36,7 @@ jobs:
         projectPath: UnityProject
         targetPlatform: iOS
         buildMethod: BuildHelper.PerformBuild
+        versioning: None
 
     - name: List output
       run: ls -la UnityProject
