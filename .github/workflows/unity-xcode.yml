@@ -23,34 +23,17 @@ jobs:
     - name: Display Unity project files
       run: ls -la UnityProject
 
-    - name: Extract Unity version from Unity project
-      id: unity-version
-      run: |
-        UNITY_VERSION=$(grep 'm_EditorVersion:' UnityProject/ProjectSettings/ProjectVersion.txt | awk '{print $2}')
-        echo "UNITY_VERSION=$UNITY_VERSION" >> $GITHUB_ENV
-
-    - name: Install Unity
-      uses: game-ci/unity-installer@v2
-      with:
-        version: ${{ env.UNITY_VERSION }}
-        ios: true
-
     - name: Inject BuildHelper.cs for CI build
       run: |
         mkdir -p "UnityProject/Assets/Editor"
         cp "helpers/BuildHelper.cs" "UnityProject/Assets/Editor/BuildHelper.cs"
 
-    - name: Build Unity project to Xcode
-      run: |
-        UNITY_PATH="/Applications/Unity/Hub/Editor/${UNITY_VERSION}/Unity.app/Contents/MacOS/Unity"
-        PROJECT_PATH="$GITHUB_WORKSPACE/UnityProject"
-        if [ ! -x "$UNITY_PATH" ]; then
-          echo "❌ Unity not found at $UNITY_PATH"
-          exit 1
-        fi
-        "$UNITY_PATH" -batchmode -quit -projectPath "$PROJECT_PATH" \
-          -buildTarget iOS \
-          -executeMethod BuildHelper.PerformBuild
+    - name: Build Unity project to Xcode with game-ci/unity-builder
+      uses: game-ci/unity-builder@v4
+      with:
+        projectPath: UnityProject
+        targetPlatform: iOS
+        buildMethod: BuildHelper.PerformBuild
 
     - name: List output
-      run: ls -la "$GITHUB_WORKSPACE/UnityProject"
+      run: ls -la UnityProject
