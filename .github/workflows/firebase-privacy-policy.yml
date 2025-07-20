@@ -77,11 +77,6 @@ jobs:
           echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > "$HOME/firebase-key.json"
         shell: bash
 
-      - name: Authenticate with Firebase
-        run: firebase auth:login --token "$(cat $HOME/firebase-key.json)" || true
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: $HOME/firebase-key.json
-
       - name: Create Firebase project if not exists
         run: |
           export GOOGLE_APPLICATION_CREDENTIALS="$HOME/firebase-key.json"
