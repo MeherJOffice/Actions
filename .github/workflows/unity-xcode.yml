@@ -30,7 +30,7 @@ jobs:
         echo "UNITY_VERSION=$UNITY_VERSION" >> $GITHUB_ENV
 
     - name: Install Unity
-      uses: game-ci/unity-installer@v3
+      uses: game-ci/unity-installer@v2
       with:
         version: ${{ env.UNITY_VERSION }}
         ios: true
