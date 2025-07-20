@@ -18,9 +18,7 @@ jobs:
 
     - name: Clone Unity project repo (with org-wide PAT)
       run: |
-        # Replace "https://github.com/Org/Repo.git" with PAT auth URL
         repo_url="${{ github.event.inputs.unity_repo_url }}"
-        # Transform to include token for authentication
         repo_url_auth=$(echo "$repo_url" | sed "s#https://github.com/#https://x-access-token:${{ secrets.ORG_WIDE_PAT }}@github.com/#")
         git clone "$repo_url_auth" UnityProject
 
@@ -30,7 +28,7 @@ jobs:
     - name: Inject BuildHelper.cs for CI build
       run: |
         mkdir -p "UnityProject/Assets/Editor"
-        cp "helpers/BuildHelper.cs" "UnityProject/Assets/Editor/BuildHelper.cs"
+        cp ".github/helpers/BuildHelper.cs" "UnityProject/Assets/Editor/BuildHelper.cs"
 
     - name: Build Unity project to Xcode with game-ci/unity-builder
       uses: game-ci/unity-builder@v4
