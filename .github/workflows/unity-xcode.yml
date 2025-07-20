@@ -6,7 +6,7 @@ on:
       unity_repo_url:
         description: 'GitHub link of the Unity project to build'
         required: true
-        default: 'https://github.com/username/repo.git'
+        default: 'https://github.com/YourOrg/YourUnityRepo.git'
 
 jobs:
   build-xcode:
@@ -16,9 +16,13 @@ jobs:
     - name: Checkout this workflow repo (for BuildHelper.cs, etc)
       uses: actions/checkout@v4
 
-    - name: Clone Unity project repo
+    - name: Clone Unity project repo (with org-wide PAT)
       run: |
-        git clone "${{ github.event.inputs.unity_repo_url }}" UnityProject
+        # Replace "https://github.com/Org/Repo.git" with PAT auth URL
+        repo_url="${{ github.event.inputs.unity_repo_url }}"
+        # Transform to include token for authentication
+        repo_url_auth=$(echo "$repo_url" | sed "s#https://github.com/#https://x-access-token:${{ secrets.ORG_WIDE_PAT }}@github.com/#")
+        git clone "$repo_url_auth" UnityProject
 
     - name: Display Unity project files
       run: ls -la UnityProject
