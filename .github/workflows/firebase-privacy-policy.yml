@@ -92,3 +92,7 @@ jobs:
       - name: Print Hosted Privacy Policy URL
         run: |
           echo "🌐 Your policy: https://${{ steps.generate_id.outputs.project_id }}.web.app/PrivacyPolicies.html"
+
+      - name: Show Firebase debug log if exists
+        if: failure()
+        run: cat ~/.config/firebase/firebase-debug.log || echo "No debug log found"
