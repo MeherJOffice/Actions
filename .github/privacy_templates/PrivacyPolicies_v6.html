@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Privacy Policy | {Product Name}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap');
+    body {
+      background: linear-gradient(135deg, #f7d6e0 0%, #e0f1fc 100%);
+      font-family: 'Quicksand', Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .policy-bubble {
+      background: #fff;
+      max-width: 740px;
+      margin: 48px auto 24px auto;
+      padding: 48px 38px 36px 38px;
+      border-radius: 36px 36px 18px 18px;
+      box-shadow: 0 12px 48px 0 rgba(90, 51, 118, 0.15), 0 1.5px 12px 0 rgba(90, 51, 118, 0.06);
+      animation: floatin 1s cubic-bezier(.35,1.4,.7,.98);
+    }
+    @keyframes floatin {
+      0% { opacity: 0; transform: translateY(30px) scale(0.96);}
+      100% { opacity: 1; transform: none;}
+    }
+    h1 {
+      color: #cd3e81;
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      font-weight: 700;
+      letter-spacing: 1.3px;
+      text-align: center;
+    }
+    h2 {
+      color: #0fa3b1;
+      margin-top: 32px;
+      margin-bottom: 8px;
+      font-size: 1.13em;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    p, ul {
+      color: #554d55;
+      font-size: 1.1em;
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+    ul {
+      padding-left: 22px;
+    }
+    a {
+      color: #fa9e5b;
+      font-weight: 700;
+      text-decoration: none;
+      border-bottom: 2px dotted #fa9e5b;
+      transition: border-bottom 0.15s;
+    }
+    a:hover {
+      border-bottom: 2px solid #fa9e5b;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #9c8aad;
+      font-size: 1em;
+      letter-spacing: 0.5px;
+    }
+    @media (max-width: 700px) {
+      .policy-bubble { padding: 18px 6px 18px 6px; }
+      h1 { font-size: 1.3em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="policy-bubble">
+    <h1>Privacy Policy</h1>
+    <p style="text-align:center;">
+      for <strong>{Product Name}</strong>
+    </p>
+    <h2>What We Collect</h2>
+    <ul>
+      <li>Technical info (IP address, OS version, app usage)</li>
+      <li><b>No</b> location or GPS data</li>
+    </ul>
+    <h2>How We Use Your Data</h2>
+    <p>
+      Your info helps us improve {Product Name}. We may also use it to send you important app updates or support.
+    </p>
+    <h2>Third-Party Partners</h2>
+    <ul>
+      <li>
+        <a href="https://www.google.com/policies/privacy/">Google Play Services</a>
+      </li>
+      <!-- Add more if your app uses others -->
+    </ul>
+    <h2>When We Share Data</h2>
+    <ul>
+      <li>To comply with legal obligations</li>
+      <li>To ensure safety or investigate fraud</li>
+      <li>With partners bound by privacy agreements</li>
+    </ul>
+    <h2>Opting Out</h2>
+    <p>
+      Uninstall the app to stop data collection. For data removal requests, contact <a href="mailto:{email}">{email}</a>.
+    </p>
+    <h2>Children</h2>
+    <p>
+      We do not knowingly collect data from children under 13. If you think your child shared info, email us at <a href="mailto:{email}">{email}</a>.
+    </p>
+    <h2>Security</h2>
+    <p>
+      Your info is protected by industry-standard measures.
+    </p>
+    <h2>Policy Updates</h2>
+    <p>
+      We may revise this page from time to time. Check here for the latest version.
+    </p>
+    <h2>Contact Us</h2>
+    <p>
+      Have questions? Reach us at <a href="mailto:{email}">{email}</a>.
+    </p>
+    <div class="footer">
+      &copy; {Product Name} &mdash; Privacy Policy
+    </div>
+  </div>
+</body>
+</html>
