@@ -1,0 +1,100 @@
+name: Deploy Privacy Policy to Firebase
+
+on:
+  workflow_dispatch:
+    inputs:
+      GAME_NAME:
+        description: 'Game Name'
+        required: true
+        default: 'My Game'
+      EMAIL:
+        description: 'Contact Email'
+        required: true
+        default: 'your@email.com'
+
+jobs:
+  deploy-firebase:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js (needed for Firebase CLI)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Create working folder
+        run: |
+          mkdir -p policy_work/public
+
+      - name: Generate random Firebase Project ID
+        id: generate_id
+        run: |
+          words=(game privacy vault secure zone key data play cloud base block safe lock gate guard shield portal byte drive core matrix space path ring disk dash sync node mode globe safezone spark pulse chip link grid boost)
+          GAME_NAME_CLEAN="$(echo "${{ github.event.inputs.GAME_NAME }}" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g' | sed -E 's/^-+|-+$//g')"
+          WORD1=${words[$RANDOM % ${#words[@]}]}
+          ID1=$(printf "%04d" $(( RANDOM % 10000 )))
+          PROJECT_ID="${GAME_NAME_CLEAN}-${WORD1}-${ID1}"
+          echo "project_id=$PROJECT_ID" >> $GITHUB_OUTPUT
+
+      - name: Pick random HTML template and prepare file
+        run: |
+          cd .github/privacy_templates
+          NUM=$(( 1 + RANDOM % 10 ))
+          cp "PrivacyPolicies_v${NUM}.html" "../../policy_work/public/PrivacyPolicies.html"
+          cd ../../
+          sed -i "s/{Product Name}/${{ github.event.inputs.GAME_NAME }}/g" policy_work/public/PrivacyPolicies.html
+          sed -i "s/{email}/${{ github.event.inputs.EMAIL }}/g" policy_work/public/PrivacyPolicies.html
+
+      - name: Create firebase.json and .firebaserc
+        run: |
+          cat > policy_work/firebase.json <<EOF
+          {
+            "hosting": {
+              "public": "public",
+              "ignore": [
+                "firebase.json",
+                "**/.*",
+                "**/node_modules/**"
+              ]
+            }
+          }
+          EOF
+          cat > policy_work/.firebaserc <<EOF
+          {
+            "projects": {
+              "default": "${{ steps.generate_id.outputs.project_id }}"
+            }
+          }
+          EOF
+
+      - name: Set up Firebase credentials
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > "${HOME}/firebase-key.json"
+        shell: bash
+
+      - name: Authenticate with Firebase
+        run: firebase auth:login --token "$(cat $HOME/firebase-key.json)" || true
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ HOME }}/firebase-key.json
+
+      - name: Create Firebase project if not exists
+        run: |
+          export GOOGLE_APPLICATION_CREDENTIALS="$HOME/firebase-key.json"
+          firebase projects:list | grep -q "^${{ steps.generate_id.outputs.project_id }}\b" \
+          || firebase projects:create "${{ steps.generate_id.outputs.project_id }}" --non-interactive
+
+      - name: Deploy to Firebase Hosting
+        run: |
+          export GOOGLE_APPLICATION_CREDENTIALS="$HOME/firebase-key.json"
+          cd policy_work
+          firebase deploy --only hosting --project "${{ steps.generate_id.outputs.project_id }}"
+
+      - name: Print Hosted Privacy Policy URL
+        run: |
+          echo "🌐 Your policy: https://${{ steps.generate_id.outputs.project_id }}.web.app/PrivacyPolicies.html"
